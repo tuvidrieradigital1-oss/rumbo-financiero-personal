@@ -10,33 +10,91 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DolaresRouteImport } from './routes/dolares'
+import { Route as GraficosRouteImport } from './routes/graficos'
+import { Route as MetasRouteImport } from './routes/metas'
+import { Route as MovimientosRouteImport } from './routes/movimientos'
+import { Route as RankingRouteImport } from './routes/ranking'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DolaresRoute = DolaresRouteImport.update({
+  id: '/dolares',
+  path: '/dolares',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GraficosRoute = GraficosRouteImport.update({
+  id: '/graficos',
+  path: '/graficos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MetasRoute = MetasRouteImport.update({
+  id: '/metas',
+  path: '/metas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MovimientosRoute = MovimientosRouteImport.update({
+  id: '/movimientos',
+  path: '/movimientos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RankingRoute = RankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dolares': typeof DolaresRoute
+  '/graficos': typeof GraficosRoute
+  '/metas': typeof MetasRoute
+  '/movimientos': typeof MovimientosRoute
+  '/ranking': typeof RankingRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dolares': typeof DolaresRoute
+  '/graficos': typeof GraficosRoute
+  '/metas': typeof MetasRoute
+  '/movimientos': typeof MovimientosRoute
+  '/ranking': typeof RankingRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dolares': typeof DolaresRoute
+  '/graficos': typeof GraficosRoute
+  '/metas': typeof MetasRoute
+  '/movimientos': typeof MovimientosRoute
+  '/ranking': typeof RankingRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/dolares' | '/graficos' | '/metas' | '/movimientos' | '/ranking'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/dolares' | '/graficos' | '/metas' | '/movimientos' | '/ranking'
+  id:
+    | '__root__'
+    | '/'
+    | '/dolares'
+    | '/graficos'
+    | '/metas'
+    | '/movimientos'
+    | '/ranking'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DolaresRoute: typeof DolaresRoute
+  GraficosRoute: typeof GraficosRoute
+  MetasRoute: typeof MetasRoute
+  MovimientosRoute: typeof MovimientosRoute
+  RankingRoute: typeof RankingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +106,51 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dolares': {
+      id: '/dolares'
+      path: '/dolares'
+      fullPath: '/dolares'
+      preLoaderRoute: typeof DolaresRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/graficos': {
+      id: '/graficos'
+      path: '/graficos'
+      fullPath: '/graficos'
+      preLoaderRoute: typeof GraficosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/metas': {
+      id: '/metas'
+      path: '/metas'
+      fullPath: '/metas'
+      preLoaderRoute: typeof MetasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/movimientos': {
+      id: '/movimientos'
+      path: '/movimientos'
+      fullPath: '/movimientos'
+      preLoaderRoute: typeof MovimientosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ranking': {
+      id: '/ranking'
+      path: '/ranking'
+      fullPath: '/ranking'
+      preLoaderRoute: typeof RankingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DolaresRoute: DolaresRoute,
+  GraficosRoute: GraficosRoute,
+  MetasRoute: MetasRoute,
+  MovimientosRoute: MovimientosRoute,
+  RankingRoute: RankingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
