@@ -5,12 +5,6 @@ import { PageHeader, Panel } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/ranking")({
-  head: () => ({ meta: [
-    { title: "Ranking de gastos e ingresos | Mis Finanzas" },
-    { name: "description", content: "Dónde se va tu dinero y en qué meses ingresás más." },
-    { property: "og:title", content: "Ranking de gastos e ingresos | Mis Finanzas" },
-    { property: "og:description", content: "Dónde se va tu dinero y en qué meses ingresás más." },
-  ] }),
   component: Ranking,
 });
 

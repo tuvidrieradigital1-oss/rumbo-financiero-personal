@@ -6,12 +6,6 @@ import { Panel, Stat, fieldCls, Field } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/")({
-  head: () => ({ meta: [
-    { title: "Resumen y diagnóstico | Mis Finanzas" },
-    { name: "description", content: "Tu situación financiera del mes, salud y alertas de quiebre." },
-    { property: "og:title", content: "Resumen y diagnóstico | Mis Finanzas" },
-    { property: "og:description", content: "Tu situación financiera del mes, salud y alertas de quiebre." },
-  ] }),
   component: Index,
 });
 

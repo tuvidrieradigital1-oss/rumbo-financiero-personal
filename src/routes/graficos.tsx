@@ -5,12 +5,6 @@ import { summarize, ranking } from "@/lib/analysis";
 import { PageHeader, Panel } from "@/components/ui-bits";
 
 export const Route = createFileRoute("/graficos")({
-  head: () => ({ meta: [
-    { title: "Gráficos | Mis Finanzas" },
-    { name: "description", content: "Gráficos de ingresos, gastos, balance, categorías y ahorro en dólares." },
-    { property: "og:title", content: "Gráficos | Mis Finanzas" },
-    { property: "og:description", content: "Gráficos de todas tus variables financieras." },
-  ] }),
   component: Graficos,
 });
 

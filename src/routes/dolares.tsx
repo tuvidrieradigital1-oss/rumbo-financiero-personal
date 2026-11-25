@@ -6,12 +6,6 @@ import { useFinance, update, uid, ars, usdFmt } from "@/lib/finance";
 import { PageHeader, Panel, Stat, Field, fieldCls } from "@/components/ui-bits";
 
 export const Route = createFileRoute("/dolares")({
-  head: () => ({ meta: [
-    { title: "Ahorro en dólares | Mis Finanzas" },
-    { name: "description", content: "Registrá tus compras de dólares, cotización promedio y valor en pesos." },
-    { property: "og:title", content: "Ahorro en dólares | Mis Finanzas" },
-    { property: "og:description", content: "Compras de dólares, cotización promedio y valor en pesos." },
-  ] }),
   component: Dolares,
 });
 

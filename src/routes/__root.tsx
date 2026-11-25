@@ -1,35 +1,22 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  Outlet,
-  Link,
-  createRootRouteWithContext,
-  useRouter,
-  HeadContent,
-  Scripts,
-  type ErrorComponentProps,
-} from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { Outlet, Link, createRootRoute, useRouter, type ErrorComponentProps } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { AppNav } from "../components/AppNav";
+import { AuthScreen } from "../components/AuthScreen";
 import { Toaster } from "../components/ui/sonner";
-
-import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
+import { AuthProvider, useAuth } from "../lib/auth";
+import { loadFinance } from "../lib/finance";
+import { supabaseConfigured } from "../lib/supabase";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <div className="flex min-h-[60vh] items-center justify-center px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">Página no encontrada</h2>
+        <p className="mt-2 text-sm text-muted-foreground">La página que buscás no existe o fue movida.</p>
         <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
+          <Link to="/" className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+            Ir al inicio
           </Link>
         </div>
       </div>
@@ -40,34 +27,17 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
-        </p>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">Esta página no cargó</h1>
+        <p className="mt-2 text-sm text-muted-foreground">Algo salió mal. Podés reintentar o volver al inicio.</p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
-          <button
-            onClick={() => {
-              router.invalidate();
-              reset();
-            }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Try again
+          <button onClick={() => { void router.invalidate(); reset(); }} className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90">
+            Reintentar
           </button>
-          <a
-            href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            Go home
+          <a href={import.meta.env.BASE_URL} className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+            Ir al inicio
           </a>
         </div>
       </div>
@@ -75,64 +45,81 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    // Replace these placeholders with the app's name and description when first building the app.
-    // Each content route, / included, must still set its own head(). Never add og:image or
-    // twitter:image here: every page without its own would inherit the root's preview image.
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Mi Planificador Financiero" },
-      { name: "description", content: "Planificador de economía personal en pesos argentinos." },
-      { property: "og:title", content: "Mi Planificador Financiero" },
-      { property: "og:description", content: "Planificador de economía personal en pesos argentinos." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700&display=swap" },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-    ],
-  }),
-  shellComponent: RootShell,
+export const Route = createRootRoute({
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
 
-function RootShell({ children }: { children: ReactNode }) {
+function FullScreenMessage({ title, children }: { title: string; children?: React.ReactNode }) {
   return (
-    <html lang="es">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="max-w-md space-y-3 text-center">
+        <h1 className="font-display text-2xl font-bold text-foreground">{title}</h1>
         {children}
-        <Scripts />
-      </body>
-    </html>
+      </div>
+    </div>
+  );
+}
+
+/** Pide login, y una vez dentro carga los datos del usuario antes de mostrar la app. */
+function Gate() {
+  const { session, loading } = useAuth();
+  const uid = session?.user.id;
+  const [dataState, setDataState] = useState<"loading" | "ready" | "error">("loading");
+  const [dataError, setDataError] = useState("");
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    if (!uid) return;
+    let cancelled = false;
+    setDataState("loading");
+    loadFinance(uid)
+      .then(() => { if (!cancelled) setDataState("ready"); })
+      .catch((e: unknown) => {
+        if (cancelled) return;
+        setDataError(e instanceof Error ? e.message : "Error desconocido");
+        setDataState("error");
+      });
+    return () => { cancelled = true; };
+  }, [uid, attempt]);
+
+  if (!supabaseConfigured) {
+    return (
+      <FullScreenMessage title="Falta configurar Supabase">
+        <p className="text-sm text-muted-foreground">
+          Definí <code>VITE_SUPABASE_URL</code> y <code>VITE_SUPABASE_ANON_KEY</code> (en un archivo <code>.env</code> en local, o como Secrets en GitHub). Mirá el README.
+        </p>
+      </FullScreenMessage>
+    );
+  }
+  if (loading) return <FullScreenMessage title="Cargando…" />;
+  if (!session) return <AuthScreen />;
+  if (dataState === "loading") return <FullScreenMessage title="Cargando tus datos…" />;
+  if (dataState === "error") {
+    return (
+      <FullScreenMessage title="No se pudieron cargar tus datos">
+        <p className="text-sm text-muted-foreground">{dataError}</p>
+        <p className="text-xs text-muted-foreground">Verificá que ejecutaste supabase/schema.sql en tu proyecto de Supabase.</p>
+        <button onClick={() => setAttempt((n) => n + 1)} className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">Reintentar</button>
+      </FullScreenMessage>
+    );
+  }
+  return (
+    <div className="min-h-screen bg-background font-sans">
+      <AppNav />
+      <main className="mx-auto max-w-6xl px-4 py-8">
+        <Outlet />
+      </main>
+    </div>
   );
 }
 
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
-
   return (
-    <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <div className="min-h-screen bg-background font-sans">
-        <AppNav />
-        <main className="mx-auto max-w-6xl px-4 py-8">
-          <Outlet />
-        </main>
-        <Toaster />
-      </div>
-    </QueryClientProvider>
+    <AuthProvider>
+      <Gate />
+      <Toaster />
+    </AuthProvider>
   );
 }

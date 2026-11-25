@@ -7,12 +7,6 @@ import { PageHeader, Panel, Stat, Field, fieldCls } from "@/components/ui-bits";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/movimientos")({
-  head: () => ({ meta: [
-    { title: "Ingresos y gastos | Mis Finanzas" },
-    { name: "description", content: "Cargá sueldo fijo y variable, alquiler, expensas, servicios y gastos del mes." },
-    { property: "og:title", content: "Ingresos y gastos | Mis Finanzas" },
-    { property: "og:description", content: "Cargá sueldo, alquiler, expensas, servicios y gastos del mes." },
-  ] }),
   component: Movimientos,
 });
 

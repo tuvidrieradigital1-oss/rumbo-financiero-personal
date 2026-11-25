@@ -9,12 +9,6 @@ import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/metas")({
-  head: () => ({ meta: [
-    { title: "Metas y ahorro | Mis Finanzas" },
-    { name: "description", content: "Metas de ahorro reales, sugerencias semanales y mensuales y escenarios hipotéticos." },
-    { property: "og:title", content: "Metas y ahorro | Mis Finanzas" },
-    { property: "og:description", content: "Metas de ahorro, sugerencias semanales y mensuales y escenarios hipotéticos." },
-  ] }),
   component: Metas,
 });
 
